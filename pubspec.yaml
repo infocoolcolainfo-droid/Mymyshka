@@ -1,0 +1,21 @@
+name: mymessenger
+description: Minimalist messenger app (Flutter + Firebase)
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^2.19.0
+  firebase_auth: ^4.6.0
+  cloud_firestore: ^4.10.0
+  provider: ^6.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
