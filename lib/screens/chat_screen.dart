@@ -51,21 +51,53 @@ class _ChatScreenState extends State<ChatScreen> {
                     final text = d['text'] ?? '';
                     final sender = d['senderId'] ?? '';
                     final ts = d['timestamp'] as Timestamp?;
-                    return MessageBubble(text: text, isMe: sender == myUid, timestamp: ts?.toDate());
+                    // AnimatedSwitcher per message for smooth appearance
+                    return AnimatedSwitcher(
+                      duration: Duration(milliseconds: 300),
+                      transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: SizeTransition(sizeFactor: animation, axisAlignment: 0.0, child: child)),
+                      child: MessageBubble(key: ValueKey(d.id), text: text, isMe: sender == myUid, timestamp: ts?.toDate()),
+                    );
                   },
                 );
               },
             ),
           ),
           SafeArea(
-            child: Row(
-              children: [
-                Expanded(child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: TextField(controller: _ctrl, decoration: InputDecoration(hintText: 'Message')),
-                )),
-                IconButton(icon: _sending ? CircularProgressIndicator() : Icon(Icons.send), onPressed: _sending ? null : _send)
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(24)),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: 120),
+                        child: Scrollbar(
+                          child: TextField(
+                            controller: _ctrl,
+                            decoration: InputDecoration(border: InputBorder.none, hintText: 'Message', isDense: true),
+                            minLines: 1,
+                            maxLines: 5,
+                            textInputAction: TextInputAction.newline,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  // Larger circular send button for better tapping on mobile
+                  Container(
+                    width: 56,
+                    height: 56,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(shape: CircleBorder(), padding: EdgeInsets.all(0)),
+                      onPressed: _sending ? null : _send,
+                      child: _sending ? SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : Icon(Icons.send, size: 24),
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],
